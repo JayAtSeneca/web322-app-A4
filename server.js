@@ -20,6 +20,7 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
 const path = require("path");
+const exphbs = require('express-handlebars');
 
 var HTTP_PORT = process.env.PORT || 8080;
 
@@ -29,6 +30,12 @@ cloudinary.config({
     api_secret: '8ZDycm8695UflqV_kEC0D26s-3k',
     secure: true
   });
+
+
+  // handlebars setup
+app.engine('.hbs', exphbs.engine({ extname: '.hbs' }));
+app.set('view engine', '.hbs');
+app.set('views', './views');
 
 const upload = multer();
 
@@ -43,7 +50,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/about.html"));
+  res.render('about');
 });
 
 app.get("/blog", (req, res) => {
@@ -123,7 +130,7 @@ app.get("/categories", (req, res) => {
 });
 
 app.get('/posts/add',function(req,res) {
-  res.sendFile(path.join(__dirname+'/views/addPost.html'));
+  res.render('addPost');
 });
 
 app.post("/posts/add", upload.single("featureImage"), (req, res) => {
