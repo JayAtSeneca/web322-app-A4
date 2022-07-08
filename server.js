@@ -161,13 +161,13 @@ app.get("/post/:id", (req, res) => {
 app.get("/categories", (req, res) => {
   blogService
     .getCategories()
-    .then((data) => {
+    .then((categories) => {
       console.log("getCategories displayed.");
-      res.json(data);
+      res.render('categories',{ categories })
     })
     .catch((err) => {
       console.log("ERROR MESSAGE:", err.message);
-      res.json(err);
+      res.render("categories", {message: "no results"});
     });
 });
 

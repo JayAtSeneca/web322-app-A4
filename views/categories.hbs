@@ -1,31 +1,24 @@
  <div class="row">
     <div class="col-md-12">
-        <h2>Posts</h2>
+        <h2>Categories</h2>
         <hr />
         <div class="table-responsive">
             <table class="table ">
                 <thead>
                     <tr>
-                        <th>Post ID</th>
-                        <th>Title</th>
-                        <th>Post Date</th>
+                        <th>Category ID</th>
                         <th>Category</th>
-                        <th>Published</th>
                     </tr>
                 </thead>
                 <tbody>
-                  {{#each posts}}
+                  {{#each categories}}
                     <tr>
-                        <td>{{ id }}</td>
-                        <td>{{ title }}</td>
-                        <td>{{ postDate }}</td>
-                        
-                        <td><a href="/posts?category={{category}}" >{{ category }}</a></td>
-                        <td>{{ published }}</td>
+                        <td> <a href="/posts?category={{id}}" +  >{{ id }}</a></td>
+                        <td> <a href="/posts?category={{id}}" >{{ category }}</a></td>
                     </tr>
                   {{/each}}
 
-                  {{#unless posts}}
+                  {{#unless categories}}
                   <div class="col-md-12 text-center">
                     <strong>{{message}}</strong>
                   </div>
