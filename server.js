@@ -112,35 +112,35 @@ app.get("/posts", (req, res) => {
   if (req.query.category) {
     blogService
       .getPostByCategory(req.query.category)
-      .then((data) => {
+      .then((posts) => {
         console.log("getAllPosts by category displayed.");
-        res.json(data);
+        res.render('posts',{ posts });
       })
       .catch((err) => {
         console.log("ERROR MESSAGE:", err.message);
-        res.json(err);
+        res.render("posts", {message: "no results"});
       });
   } else if (req.query.minDate) {
     blogService
       .getPostByMinDate(req.query.minDate)
-      .then((data) => {
+      .then((posts) => {
         console.log("getAllPosts by minDate displayed.");
-        res.json(data);
+        res.render('posts',{ posts });
       })
       .catch((err) => {
         console.log("ERROR MESSAGE:", err.message);
-        res.json(err);
+        res.render("posts", {message: "no results"});
       });
   } else {
     blogService
       .getAllPosts()
-      .then((data) => {
+      .then((posts) => {
         console.log("getAllPosts displayed.");
-        res.json(data);
+        res.render('posts',{ posts });
       })
       .catch((err) => {
         console.log("ERROR MESSAGE:", err.message);
-        res.json(err);
+        res.render("posts", {message: "no results"});
       });
   }
 });
