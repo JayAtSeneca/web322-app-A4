@@ -124,3 +124,19 @@ module.exports.getPostById = (id) => {
     resolve(postById);
   });
 };
+
+module.exports.getPublishedPostsByCategory = (category) => {
+  var publishedPosts = [];
+  return new Promise((resolve, reject) => {
+    for (let i = 0; i < posts.length; i++) {
+      if (posts[i].category == category && posts[i].published == true)
+        publishedPosts.push(posts[i]);
+    }
+    if (publishedPosts.length === 0) {
+      let err = "no results returned";
+      reject({ message: err });
+    }
+
+    resolve(publishedPosts);
+  });
+};
