@@ -21,7 +21,7 @@ const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
 const path = require("path");
 const exphbs = require("express-handlebars");
-const stripJs = require('strip-js');
+const stripJs = require("strip-js");
 
 var HTTP_PORT = process.env.PORT || 8080;
 
@@ -89,15 +89,58 @@ app.use(function (req, res, next) {
 });
 
 app.get("/", (req, res) => {
-  res.redirect("/about");
+  res.redirect("/blog");
 });
 
 app.get("/about", (req, res) => {
   res.render("about");
 });
 
-app.get('/blog', async (req, res) => {
+app.get("/blog", async (req, res) => {
+  // Declare an object to store properties for the view
+  let viewData = {};
 
+  try {
+    // declare empty array to hold "post" objects
+    let posts = [];
+
+    // if there's a "category" query, filter the returned posts by category
+    if (req.query.category) {
+      // Obtain the published "posts" by category
+      posts = await blogService.getPublishedPostsByCategory(req.query.category);
+    } else {
+      // Obtain the published "posts"
+      posts = await blogService.getPublishedPosts();
+    }
+
+    // sort the published posts by postDate
+    posts.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
+
+    // get the latest post from the front of the list (element 0)
+    let post = posts[0];
+
+    // store the "posts" and "post" data in the viewData object (to be passed to the view)
+    viewData.posts = posts;
+    viewData.post = post;
+  } catch (err) {
+    viewData.message = "no results";
+  }
+
+  try {
+    // Obtain the full list of "categories"
+    let categories = await blogService.getCategories();
+
+    // store the "categories" data in the viewData object (to be passed to the view)
+    viewData.categories = categories;
+  } catch (err) {
+    viewData.categoriesMessage = "no results";
+  }
+
+  // render the "blog" view with all of the data (viewData)
+  res.render("blog", { data: viewData });
+});
+
+app.get('/blog/:id', async (req, res) => {
   // Declare an object to store properties for the view
   let viewData = {};
 
@@ -118,15 +161,19 @@ app.get('/blog', async (req, res) => {
       // sort the published posts by postDate
       posts.sort((a,b) => new Date(b.postDate) - new Date(a.postDate));
 
-      // get the latest post from the front of the list (element 0)
-      let post = posts[0]; 
-
       // store the "posts" and "post" data in the viewData object (to be passed to the view)
       viewData.posts = posts;
-      viewData.post = post;
 
   }catch(err){
       viewData.message = "no results";
+  }
+
+  try{
+      // Obtain the post by "id"
+      const post = await blogService.getPostById(req.params.id);
+      viewData.post = post[0]
+  }catch(err){
+      viewData.message = "no results"; 
   }
 
   try{
@@ -140,9 +187,10 @@ app.get('/blog', async (req, res) => {
   }
 
   // render the "blog" view with all of the data (viewData)
-  res.render("blog", {data: viewData})
 
+  res.render("blog", {data: viewData})
 });
+
 
 app.get("/posts", (req, res) => {
   if (req.query.category) {
@@ -150,33 +198,33 @@ app.get("/posts", (req, res) => {
       .getPostByCategory(req.query.category)
       .then((posts) => {
         console.log("getAllPosts by category displayed.");
-        res.render('posts',{ posts });
+        res.render("posts", { posts });
       })
       .catch((err) => {
         console.log("ERROR MESSAGE:", err.message);
-        res.render("posts", {message: "no results"});
+        res.render("posts", { message: "no results" });
       });
   } else if (req.query.minDate) {
     blogService
       .getPostByMinDate(req.query.minDate)
       .then((posts) => {
         console.log("getAllPosts by minDate displayed.");
-        res.render('posts',{ posts });
+        res.render("posts", { posts });
       })
       .catch((err) => {
         console.log("ERROR MESSAGE:", err.message);
-        res.render("posts", {message: "no results"});
+        res.render("posts", { message: "no results" });
       });
   } else {
     blogService
       .getAllPosts()
       .then((posts) => {
         console.log("getAllPosts displayed.");
-        res.render('posts',{ posts });
+        res.render("posts", { posts });
       })
       .catch((err) => {
         console.log("ERROR MESSAGE:", err.message);
-        res.render("posts", {message: "no results"});
+        res.render("posts", { message: "no results" });
       });
   }
 });
@@ -199,11 +247,11 @@ app.get("/categories", (req, res) => {
     .getCategories()
     .then((categories) => {
       console.log("getCategories displayed.");
-      res.render('categories',{ categories })
+      res.render("categories", { categories });
     })
     .catch((err) => {
       console.log("ERROR MESSAGE:", err.message);
-      res.render("categories", {message: "no results"});
+      res.render("categories", { message: "no results" });
     });
 });
 
@@ -247,7 +295,7 @@ app.post("/posts/add", upload.single("featureImage"), (req, res) => {
 });
 
 app.use((req, res) => {
-  res.status(404).send("Page Not Found");
+  res.status(404).render("404");
 });
 
 console.log("Ready for initialize");
