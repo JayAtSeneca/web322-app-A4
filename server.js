@@ -1,5 +1,5 @@
 /*********************************************************************************
- * WEB322 – Assignment 03
+ * WEB322 – Assignment 04
  * I declare that this assignment is my own work in accordance with Seneca Academic Policy.
  * No part of this assignment has been copied manually or electronically from any other source (including 3rd party web sites) or distributed to other students.
  *
@@ -7,7 +7,7 @@
  * Student ID: 147268205
  * Date: 16/06/2022
  *
- * Online (Heroku) URL: https://afternoon-ocean-60644.herokuapp.com/
+ * Online (Heroku) URL: https://pacific-hamlet-47186.herokuapp.com/blog
  *
  * GitHub Repository URL: https://github.com/JayAtSeneca/web322-app
  *
